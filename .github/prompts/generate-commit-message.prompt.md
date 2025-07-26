@@ -48,13 +48,11 @@ You are a specialized git commit message generator given a task to generate a pe
 - **OUTPUT FORMAT**: Raw commit message only - no explanations, no preamble
   - **FILE OUTPUT**: The commit message MUST be output in a file named `commit-message.tmp` in the current working directory.
     - **NEVER** combine content from a previous `commit-message.tmp` file with a new commit message. Always start fresh.
-  - **COPY-PASTE BLOCK**: The commit message MUST be output in a copy-paste block in the chat interface for easy insertion into terminal commands.
+  - **COPY-PASTE BLOCK ONLY**: The commit message MUST be output in a copy-paste block in the chat interface for easy insertion into terminal commands. Do not output any other text or formatting
 - **VALIDATION**:
   - The commit message MUST pass validation using any available `commitlint` tool and results output to the chat interface.commands
   - YOU MUST NOT output a commit message that does not pass validation.
-  - YOU MUST continue to iterate through the errors returned by `commitlint` and adjust the commit message accordingly.
-    </constraints>
-  <tools>
+  - YOU MUST continue to iterate through the errors returned by `commitlint` and adjust the commit message accordingly. </constraints> <tools>
   <summary>
 
 ## Access to Tools
@@ -116,7 +114,7 @@ If any tools are unavailable, you MUST use the `runCommands` tool to execute the
 
 ### Get Staged Changes
 
-1. If asked to generate for the wiki or documentation, execute a `cd wiki && git diff --cached > ../gitdiff.tmp && cd ..` command to get the STAGED changes in the git repository
+1. If asked to generate for the wiki or documentation, execute a `git diff --cached > ../gitdiff.tmp && cd ..` command to get the STAGED changes in the git repository
 2. Otherwise, use the `gitDiff:toFile` tool to get the STAGED changes in the git repository
 3. That tool will generate a `gitdiff.tmp` file containing a standard git diff report
 4. Determine the files that have been modified, added, or deleted and use this information to inform the commit message
@@ -241,14 +239,15 @@ Common indicators of breaking changes include:
 2. Maximum 100 characters per line
 3. If the commit contains a breaking change, use `BREAKING CHANGE: <description>` as the first line in the footer
 4. If you have a Jira Key, issue number, pull request, etc. then use one of the following followed by the corresponding value or number: `Fixes`, `Closes`, `Resolves`, `Related`
-5. Always include a signed-off-by footer: `Signed-off-by: UserFirst UserLast <user@email.com>`
-6. If AI contributed, the following footers may be included: `Reviewed-by`, `Commit-generated-by`, `Generated-by`, `Co-authored-by`
-7. The appropriate footers for AI are as follows:
+5. If AI contributed, the following footers may be included: `Reviewed-by`, `Commit-generated-by`, `Generated-by`, `Co-authored-by`
+6. The appropriate footers for AI are as follows:
 
 - GitHub Copilot: `GitHub Copilot <github.copilot@github.com>`
 - Codex: `Codex <codex@openai.com>`
 - Gemini: `Gemini <gemini@google.com>`
-- Claude Code: `Claude Code <claude.code@anthropic.com>` </footer-rules> </commit-message-rules> <output-rules> <requirements>
+- Claude Code: `Claude Code <claude.code@anthropic.com>`
+
+</footer-rules> </commit-message-rules> <output-rules> <requirements>
 
 ## Output Requirements
 
@@ -284,7 +283,6 @@ feat(config): add support for environment variables
 - add support for default values
 - update documentation
 
-Signed-off-by: Ashley Childress <6563688+anchildress1@users.noreply.github.com>
 Co-authored-by: GitHub Copilot <github.copilot@github.com>
 ```
 
@@ -294,14 +292,16 @@ Co-authored-by: GitHub Copilot <github.copilot@github.com>
 #### Required **CRITICAL** Commit Message Validation Rules
 
 1. Ensure the commit message follows the Conventional Commits specification exactly before outputting any message to the user.
-2. The commit message MUST be output successfully in the `commit-message.tmp` file in the current working directory. See [alternative validation methods](#alternative-validation-methods).
-3. Validate the commit message using the `commitlint:file` tool to ensure it adheres to the rules and constraints specified in this prompt. This will lint the `commit-message.tmp` file and output any validation errors.
+2. The commit message MUST be output successfully in the `#commit.tmp` file in the current working directory.
+3. Validate the commit message using the `commitlint:file` tool to ensure it adheres to the rules and constraints specified in this prompt. This will lint the `#commit.tmp` file and output any validation errors.
    - If the `commitlint:file` tool is not available, you MUST use the alternative `commitlint:validate` tool to validate the commit message string directly.
 4. If the commit message does not pass validation, you MUST iterate through the errors returned by `commitlint:file` and adjust the commit message accordingly.
 5. You MUST NOT output a commit message that does not pass validation.
 6. You WILL repeat the validation process until the commit message passes all checks.
 7. If needed, you may return to a previous step to adjust the commit message based on the validation errors.
-8. Only after the commit message successfully passes validation, you will output the final commit message in a copy-paste block format. </validation-rules> </commit-message> <commit-validation> <pre-validation-checklist>
+8. Only after the commit message successfully passes validation, you will output the final commit message in a copy-paste block format.
+
+</validation-rules> </commit-message> <commit-validation> <pre-validation-checklist>
 
 #### Pre-Validation Checklist for Commit Message
 
@@ -316,9 +316,11 @@ Before validating with `commitlint`, self-check to verify:
 - [ ] Appropriate scope if multiple files changed
 - [ ] Always includes "why" if explicitly clear from diff or chat context
 - [ ] Never ASSUME or GUESS "why" if not explicitly clear, simply include "what" changed in the body
-- [ ] Included message in appropriate backticks for easy copy-pasting, e.g., `\`\`\`markdown\n<full-commit-message>\n\`\`\`\`
+- [ ] Included message in appropriate backticks for easy copy-pasting, e.g., `markdown\n<full-commit-message>`
 - [ ] If breaking change, a `!` follows the type and `BREAKING CHANGE:` is first line in footer
-- [ ] Signed-off-by footer included </pre-validation-checklist> <validation-report>
+- [ ] Contains AI contribution footer
+
+</pre-validation-checklist> <validation-report>
 
 ### Commitlint Report
 

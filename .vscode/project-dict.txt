@@ -31,6 +31,8 @@ SIEM
 cccp
 semgrep
 sarif
+gpgsign
+returntocorp
 
 // Internal Project
 Kondo
